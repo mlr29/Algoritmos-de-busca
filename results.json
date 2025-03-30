@@ -1,0 +1,10 @@
+{
+        "Busca em extensão (amplitude)": 366,
+        "Busca de custo uniforme": 366,
+        "Busca em profundidade": 494,
+        "Busca em profundidade limitada": 516,
+        "Busca de aprofundamento iterativo": 366,
+        "Busca direcional": 366,
+        "Busca gulosa": 366,
+        "Algoritmo A*": 366
+    }
