@@ -9,17 +9,6 @@ class Graph {
         this.graphDict = graphDict;
     }
 
-    get(a, b = null) {
-        let aList = this.graphDict[a];
-        if (aList) {
-            if (b) {
-                return aList[b];
-            }
-            return aList;
-        }
-        return null;
-    }
-
     nodes() {
         let nodes = new Set();
         for (let node in this.graphDict) {
@@ -49,47 +38,6 @@ class Node {
         }
     }
 
-    __repr__() {
-        return `<Node ${this.state}>`;
-    }
-
-    __lt__(node) {
-        return this.state < node.state;
-    }
-
-    expand(problem) {
-        return this.child_node(problem, null);
-    }
-
-    child_node(problem, action) {
-        let next_state = problem.result(this.state, action);
-        let new_cost = problem.path_cost(this.path_cost, this.state, action, next_state);
-        let next_node = new Node(next_state, this, action, new_cost);
-        return next_node;
-    }
-
-    solution() {
-        let path_back = [];
-        let node = this;
-        while (node) {
-            path_back.push(node);
-            node = node.parent;
-        }
-        return path_back.reverse();
-    }
-
-    path() {
-        let path_back = this.solution();
-        return path_back.map(node => node.state);
-    }
-
-    __eq__(node) {
-        return this.state === node.state;
-    }
-
-    __hash__() {
-        return hash(this.state);
-    }
 }
 
 
@@ -118,24 +66,21 @@ const rl = readline.createInterface({
 // Função para capturar inputs e executar a lógica
 function start() {
     rl.question('Digite a cidade inicial: ', (cidadeInicial) => {
-        if (!(g.nodes().has(cidadeInicial))) {
-            console.log('Cidade inicial inválida. Tente novamente.');
-            start();
-            return;
-        }
-
-        rl.question('Digite a cidade de destino: ', (cidadeDestino) => {
-            if (!(g.nodes().has(cidadeDestino))) {
-                console.log('Cidade destino inválida. Tente novamente.');
-                start();
-                return;
-            }
-            
-            console.log(`Calculando rota de ${cidadeInicial} para ${cidadeDestino}...`);
-            main(cidadeInicial, cidadeDestino);
-            rl.close(); // Finaliza o readline
-        });
+      if (!g.nodes().has(cidadeInicial)) return retry('Cidade inicial inválida. Tente novamente.', start);
+  
+      rl.question('Digite a cidade de destino: ', (cidadeDestino) => {
+        if (!g.nodes().has(cidadeDestino)) return retry('Cidade destino inválida. Tente novamente.', start);
+  
+        console.log(`\nCalculando rota de ${cidadeInicial} para ${cidadeDestino}...\n`);
+        main(cidadeInicial, cidadeDestino);
+        rl.close();
+      });
     });
+  }
+  
+function retry(msg, fn) {
+    console.log(msg);
+    return fn()
 }
 
 // Função principal para executar as buscas
@@ -154,16 +99,17 @@ function main(start, goal) {
     let dfsPath = dfs(g, start, goal);
     console.log("1.3 Busca em profundidade:", dfsPath, "Distância:", calculatePathCost(dfsPath, g),"\n");
 
+    let depth = 5;
     // Busca em profundidade limitada
-    let dlsPath = depthLimitedSearch(g, start, goal, 5); // Limite de profundidade = 5
-    console.log("1.4 Busca em profundidade limitada:", dlsPath, "Distância:", calculatePathCost(dlsPath, g),"\n");
+    let dlsPath = depthLimitedSearch(g, start, goal, depth); // Limite de profundidade = 5
+    console.log(`1.4 Busca em profundidade limitada (limite ${depth}):`, dlsPath, "Distância:", calculatePathCost(dlsPath, g),"\n");
 
     // Busca de aprofundamento iterativo
     let idsPath = iterativeDeepeningSearch(g, start, goal);
     console.log("1.5 Busca de aprofundamento iterativo:", idsPath, "Distância:", calculatePathCost(idsPath, g),"\n");
 
     // Busca direcional
-    let directionalPath = directionalSearch(g, start, goal);
+    let directionalPath = bidirectionalSearch(g, start, goal);
     console.log("1.6 Busca direcional:", directionalPath, "Distância:", calculatePathCost(directionalPath, g),"\n");
 
     // Busca gulosa
@@ -188,6 +134,28 @@ function main(start, goal) {
     fs.writeFileSync('results.json', results, 'utf8');
     console.log("Resultados salvos no arquivo 'results.json'.");
 }
+
+//ALGORITMOS DE BUSCA
+
+// Função para calcular o custo total de um caminho
+function calculatePathCost(path, graph) {
+    if (!path || path.length < 2) return 0;
+    let cost = 0;
+    for (let i = 0; i < path.length - 1; i++) {
+       cost += graph.graphDict[path[i]][path[i + 1]];
+    }
+    return cost;    
+}
+
+
+// Função heurística (exemplo: distância em linha reta)
+function heuristic(city1, city2) {
+    // Calcula a distância euclidiana entre duas cidades usando suas coordenadas
+    const [x1, y1] = g.locations[city1];
+    const [x2, y2] = g.locations[city2];
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
 
 function bfs(graph, initial, goal) {
     // Fila para armazenar nós a serem explorados
@@ -228,25 +196,6 @@ function bfs(graph, initial, goal) {
 
     // Se não encontrou caminho
     return null;
-}
-
-// Função para calcular o custo total de um caminho
-function calculatePathCost(path, graph) {
-    if (!path || path.length < 2) return 0;
-    let cost = 0;
-    for (let i = 0; i < path.length - 1; i++) {
-        cost += graph.graphDict[path[i]][path[i + 1]];
-    }
-    return cost;    
-}
-
-
-// Função heurística (exemplo: distância em linha reta)
-function heuristic(city1, city2) {
-    // Calcula a distância euclidiana entre duas cidades usando suas coordenadas
-    const [x1, y1] = g.locations[city1];
-    const [x2, y2] = g.locations[city2];
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
 
@@ -301,33 +250,32 @@ function dfs(graph, start, goal) {
             for (let nextState in neighbors) {
                 if (!visited.has(nextState)) {
                     let child = new Node(nextState, node, nextState, node.path_cost + neighbors[nextState]);
+                    //console.log(child);
                     stack.push(child);
                 }
             }
         }
+
     }
 
     return null;
 }
 
 function depthLimitedSearch(graph, start, goal, limit) {
-    function recursiveDLS(node, goal, limit, visited) {
-        visited++;
+    let visited = new Set();
+    function recursiveDLS(node, goal, limit) {
+        visited.add(node.state);
         if (node.state === goal) {
-            
-            console.log(`Porcentagem de nós percorridos: ${(visited / graph.totalNodes() * 100).toFixed(2)}%`);
+            console.log(`Porcentagem de nós percorridos: ${(visited.size / graph.totalNodes() * 100).toFixed(2)}%`);
             return reconstructPath(node);
         } else if (limit === 0) {
             return null;
         } else {
-            let cutoffOccurred = false;
             let neighbors = graph.graphDict[node.state];
             for (let nextState in neighbors) {
                 let child = new Node(nextState, node, nextState, node.path_cost + neighbors[nextState]);
-                let result = recursiveDLS(child, goal, limit - 1, visited);
-                if (result) {
-                    return result;
-                }
+                let result = recursiveDLS(child, goal, limit - 1);
+                if (result) return result;
             }
             return null;
         }
@@ -348,31 +296,72 @@ function iterativeDeepeningSearch(graph, start, goal) {
     }
 }
 
-function directionalSearch(graph, start, goal) {
-    let queue = [];
-    let startNode = new Node(start, null, null, 0);
-    queue.push(startNode);
-    let visited = new Set();
-  
-    while (queue.length > 0) {
-        let node = queue.shift();
 
-        if (node.state === goal) {
-            console.log(`Porcentagem de nós percorridos: ${(visited.size / graph.totalNodes() * 100).toFixed(2)}%`);
-            return reconstructPath(node);
-        }
 
-        if (!visited.has(node.state)) {
-            visited.add(node.state);
+function bidirectionalSearch(graph, start, goal) {
+    let queueTop = [];
+    let queueBottom = []
+    let startNodeTop = new Node(start, null, null, 0);
+    let startNodeBottom = new Node(goal, null, null, 0);
+    let visitedTop = new Map();
+    let visitedBottom = new Map();
+    let nodeTop, nodeBottom, pathTop, pathBottom, child;
+    
+    queueTop.push(startNodeTop);
+    visitedTop.set(start,startNodeTop)
+    queueBottom.push(startNodeBottom);
+    visitedBottom.set(goal,startNodeBottom);
+    
 
-            let neighbors = graph.graphDict[node.state];
-            for (let nextState in neighbors) {
-                if (!visited.has(nextState)) {
-                    let child = new Node(nextState, node, nextState, node.path_cost + neighbors[nextState]);
-                    queue.push(child);
+    while (queueTop.length > 0 && queueBottom.length > 0) {
+        nodeTop = queueTop.shift();
+       
+        let neighbors = graph.graphDict[nodeTop.state];
+        for (let nextState in neighbors) {
+            if (!visitedTop.has(nextState)) {
+                child = new Node(nextState, nodeTop, nextState, nodeTop.path_cost + neighbors[nextState]);
+                queueTop.push(child);
+
+                if (visitedBottom.has(nextState)) {
+                    console.log(`Porcentagem de nós percorridos: ${((visitedTop.size + visitedBottom.size) / graph.totalNodes() * 100).toFixed(2)}%`);
+
+                    let meetingNodeTop = child;
+                    let meetingNodeBottom = visitedBottom.get(nextState);
+                    let pathTop = reconstructPath(meetingNodeTop);
+                    let pathBottom = reconstructPath(meetingNodeBottom);
+                    pathBottom.pop(); // Remover o estado duplicado
+                    pathBottom.reverse();
+                    return pathTop.concat(pathBottom);
                 }
             }
         }
+        
+        nodeBottom = queueBottom.shift();
+        
+        neighbors = graph.graphDict[nodeBottom.state];
+        for (let nextState in neighbors) {
+            if (!visitedBottom.has(nextState)) {
+                child = new Node(nextState, nodeBottom, nextState, nodeBottom.path_cost + neighbors[nextState]);
+                queueBottom.push(child);
+            }
+
+            if (visitedTop.has(nextState)) {
+                console.log(`Porcentagem de nós percorridos: ${((visitedTop.size + visitedBottom.size) / graph.totalNodes() * 100).toFixed(2)}%`);
+                
+                let meetingNodeBottom = child;
+                let meetingNodeTop = visitedTop.get(nextState);
+                
+                pathTop = reconstructPath(meetingNodeTop);
+
+                pathBottom = reconstructPath(meetingNodeBottom);
+                pathBottom.pop();
+                pathBottom.reverse();
+                
+    
+                return pathTop.concat(pathBottom);;
+            }
+        }        
+
     }
 
     return null;
@@ -504,5 +493,8 @@ g.locations = {
 console.log("\nCidades disponíveis: ");
 g.nodes().forEach(city => console.log(city));
 
-// Iniciar o script
+//Iniciar o script
 start();
+
+
+
