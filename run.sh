@@ -1,4 +1,4 @@
-#!/bin/bash
+#Linux
 
 # Caminho para o arquivo principal
 MAIN_FILE="./main.js"
@@ -11,3 +11,4 @@ GOAL_CITY="Craiova"
 echo -e "$START_CITY\n$GOAL_CITY" | node "$MAIN_FILE"
 
 node ./generateChart.js
+
