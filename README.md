@@ -10,8 +10,9 @@ Tenha o [NodeJS](https://nodejs.org/en/download/) em conjunto com o gerenciador 
 
 e confirme as informações de configuração, depois instale os pacotes:
 
-`npm install readline`
-`npm install fs`
+    npm install readline
+    npm install fs
+    npm install chartjs-node-canvas
 
 Em seguida adicione a propriedade `"type": "module"` em `package.json`:
 
