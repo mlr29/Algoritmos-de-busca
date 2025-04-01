@@ -32,6 +32,14 @@ Inicie o script com:
 
 `node main.js`
 
+E em seguida insira os nomes das cidades.
+
 ## Outputs
 
-A imagem `distances_chart.png` contém o gráfico com as distâncias dos caminhos dos algoritmos.  
+Como resultado teremos o caminho gerado por cada tipo de busca e algumas métricas de desempenho relacionadas.
+
+Para gerar o gráfico comparativo das distâncias de cada algoritmo de busca execute o arquivo `generateChart.js`:
+
+`node ./generateChart.js`
+
+A imagem gerada `distances_chart.png` contém o gráfico com as distâncias dos caminhos de cada busca para as cidades especificadas.  
