@@ -501,6 +501,8 @@ g.locations = {
     'Zerind': [108, 531]
 };
 
-console.log(g.nodes())
+console.log("\nCidades disponíveis: ");
+g.nodes().forEach(city => console.log(city));
+
 // Iniciar o script
 start();
