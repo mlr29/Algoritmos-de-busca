@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmos de busca</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <main>
+        <h1>Algoritmos de Busca</h1>
+        <h2>Escolha um algoritmo de busca e as cidades</h2>
+        <div id="inputContent" class="input-content">
+            <label for="searchAlgorithms">Escolha um algoritmo de busca:</label>
+            <select id="searchAlgorithms">
+                <option value="bfs">Busca em Extensão</option>
+                <option value="uniform">Busca Uniforme</option>
+                <option value="depth">Busca em Profundidade</option>
+                <option value="depth-limited">Busca em Profundidade Limitada</option>
+                <option value="depth-iterative">Busca em Aprofundamento Iterativo</option>
+                <option value="bidirectional">Busca Bidirecional</option>
+                <option value="greedy">Busca Gulosa</option>
+                <option value="astar">Busca A*</option>
+            </select>
+            <label for="selectStartCityInput">Cidade Inicial:</label>
+            <select id="selectStartCityInput">
+            </select>
+
+            <label for="selectGoalCityInput">Cidade Final:</label>
+            <select id="selectGoalCityInput">
+            </select>
+        </div>
+        
+        <button id="calculatePathButton" class="calculate-button">Calcular</button>
+        
+        <div class="result-content">
+            <label for="resultPath" id="labelPath">Caminho:</label>
+            <input type="text" id="resultPath" class="result-path-input" readonly>
+            <label for="resultDistance" class="result" id="labelDistance">Distância:</label>
+            <input type="text" id="resultDistance" class="result-distance-input" readonly>
+            <label for="resultPercentage" class="result" id="labelPercentage">% Nós percorridos:</label>
+            <input type="text" id="resultPercentage" class="result-distance-input" readonly>
+        
+        </div>
+        <img src="./romania-map.png" alt="Romania Map" class="img-map">
+        <figure>
+            <canvas id="myChart" class="img-chart" width="800" height="600"></canvas>
+            <figcaption>Gráfico de Distâncias</figcaption>
+        </figure>
+    </main>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer type="module" src="./script.js"></script>
+</html>

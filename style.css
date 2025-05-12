@@ -1,0 +1,115 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+label {
+    margin-top: 10px;
+    font-size: 16px;
+}   
+
+.input-content{
+    max-width: 500px;
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+
+
+.calculate-button{
+    padding: 10px 20px;
+    margin: 0 auto;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.result-content{
+    margin-top: 20px;
+    max-width: 500px;
+    gap: 10px; 
+    display: grid; 
+    /* grid-template-columns: 1fr 1fr;  */
+        grid-template-areas: "L CC CC CC" 
+                            "LD CD LP CP"; 
+    align-items: center; 
+    justify-items: end;
+}
+
+#labelPath{
+    grid-area: L;
+}
+#labelDistance{
+    grid-area: LD;
+}
+#labelPercentage{
+    grid-area: LP;
+}
+#resultPath{
+    grid-area: CC;
+}
+#resultDistance{
+    grid-area: CD;
+}
+#resultPercentage{
+    grid-area: CP;
+}
+
+.result-path-input{
+    width: 400px;
+}
+
+.result-distance-input{
+    width: 50px;   
+    margin-left: 10px;
+}
+
+.img-chart{
+    margin-top: 20px;
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+}
+
+.img-map{
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+
+figcaption{
+    text-align: center;
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+}
