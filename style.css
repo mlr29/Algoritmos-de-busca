@@ -113,3 +113,36 @@ figcaption{
     font-size: 14px;
     color: #555;
 }
+
+@media (max-width: 600px) {
+    body, main {
+        margin: 5px;
+        padding: 0;
+    }
+    .input-content,
+    .result-content {
+        max-width: 100%;
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "L"
+            "CC"
+            "LD"
+            "CD"
+            "LP"
+            "CP";
+        gap: 8px;
+    }
+    .result-path-input {
+        width: 100%;
+        min-width: 0;
+    }
+    .result-distance-input {
+        width: 100%;
+        margin-left: 0;
+    }
+    .img-chart,
+    .img-map {
+        max-width: 100%;
+        margin-top: 10px;
+    }
+}
