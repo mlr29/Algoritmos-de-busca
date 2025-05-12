@@ -22,15 +22,13 @@ const searchAlgorithms = {
     astar: search.aStarSearch
 };
 
-console.log(searchAlgorithms);
 
 for (const city of graph.nodes()) {
     const optionAttributes = {
         value: city,
         textContent: city
     };
-    // console.log(optionAttributes);
-
+    
     const option = document.createElement("option");
     Object.assign(option, optionAttributes);
     selectStartCityInput.appendChild(option);
@@ -40,16 +38,13 @@ for (const city of graph.nodes()) {
     selectGoalCityInput.appendChild(option2);
 }
 
-// console.log(graph.nodes());
 selectSearchContent.addEventListener("change", (event) => {
     const selectedValue = event.target.value;
-    // Remove any existing input for depth limit if present
-    const existingInput = document.getElementById("depthLimit");
+     const existingInput = document.getElementById("depthLimit");
     if (existingInput) {
         existingInput.remove();
     }
 
-    // Handle the selected value
     const inputConfigurations = {
         "depth-limited": {
         createInput: true,
@@ -58,6 +53,8 @@ selectSearchContent.addEventListener("change", (event) => {
             id: "depthLimit",
             placeholder: "Limite",
             required: true,
+            min: 1,
+            max: 100,
             style: {
             width: "80px",
             marginTop: "10px",
@@ -66,8 +63,6 @@ selectSearchContent.addEventListener("change", (event) => {
             border: "1px solid #ccc",
             borderRadius: "5px",
             gridColumn: "2",
-            min: 1,
-            max: 100
             }
         }
         },
@@ -78,6 +73,8 @@ selectSearchContent.addEventListener("change", (event) => {
             id: "depthLimit",
             placeholder: "Limite",
             required: true,
+            min: 1,
+            max: 100,
             style: {
             width: "80px",
             marginTop: "10px",
@@ -86,8 +83,6 @@ selectSearchContent.addEventListener("change", (event) => {
             border: "1px solid #ccc",
             borderRadius: "5px",
             gridColumn: "2",
-            min: 1,
-            max: 100,
             }
         }
         }
@@ -128,8 +123,7 @@ calculatePathButton.addEventListener("click", () => {
     resultPath.value = resultObject.path ? resultObject.path.join(" ⇒ ") : "Caminho não encontrado";
     resultDistance.value = resultObject.distance !== undefined ? resultObject.distance : "Distância não encontrada";
     resultPercentage.value = resultObject.percentageVisited !== undefined ? resultObject.percentageVisited : "Porcentagem não encontrada";
-    //console.log(heuristic.getValueHeuristic({city1: startCity, city2: goalCity}));
-
+    
     const bfsDistance = search.searchBFS(graph, startCity, goalCity).distance;
     const ucsDistance = search.uniformCostSearch(graph, startCity, goalCity).distance;
     const dfsDistance = search.dfs(graph, startCity, goalCity).distance;
@@ -151,7 +145,6 @@ calculatePathButton.addEventListener("click", () => {
     };
     
     
-    // Remove the existing canvas if it exists
     const existingCanvas = document.getElementById('myChart');
     const figcaption = document.querySelector('figcaption');
     if (existingCanvas) {
@@ -159,14 +152,12 @@ calculatePathButton.addEventListener("click", () => {
         figcaption.style.display = 'none';
     }
     
-    // Create a new canvas element
     const newCanvas = document.createElement('canvas');
     newCanvas.id = 'myChart';
     newCanvas.className = 'img-chart';
     newCanvas.width = 800;
     newCanvas.height = 600;
 
-    // Append the new canvas to the figure
     const figure = document.querySelector('figure');
     figure.appendChild(newCanvas);
 
@@ -174,6 +165,5 @@ calculatePathButton.addEventListener("click", () => {
     figcaption.style.display = 'block';
     
     generateChart(results);
-    //const ctx = document.getElementById('myChart').getContext('2d');
 }
 );
